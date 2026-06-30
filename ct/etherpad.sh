@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/build.func)
 # Copyright (c) 2021-2026 community-scripts ORG
-# Author: MickLesk (CanbiZ)
+# Author: John McLear (JohnMcLear)
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: https://snapotter.com
+# Source: https://etherpad.org
 
-APP="SnapOtter"
-var_tags="${var_tags:-media;image}"
+APP="Etherpad"
+var_tags="${var_tags:-docs;collaboration;editor}"
 var_cpu="${var_cpu:-2}"
-var_ram="${var_ram:-4096}"
-var_disk="${var_disk:-20}"
+var_ram="${var_ram:-2048}"
+var_disk="${var_disk:-8}"
 var_os="${var_os:-debian}"
 var_version="${var_version:-13}"
+var_arm64="${var_arm64:-yes}"
 var_unprivileged="${var_unprivileged:-1}"
-var_arm64="${var_arm64:-no}"
 
 header_info "$APP"
 variables
@@ -25,28 +25,30 @@ function update_script() {
   check_container_storage
   check_container_resources
 
-  if [[ ! -d /opt/snapotter ]]; then
+  if [[ ! -d /opt/etherpad-lite ]]; then
     msg_error "No ${APP} Installation Found!"
     exit
   fi
 
-  if check_for_gh_release "snapotter" "snapotter-hq/SnapOtter"; then
+  if check_for_gh_release "etherpad-lite" "ether/etherpad"; then
     msg_info "Stopping Service"
-    systemctl stop snapotter
+    systemctl stop etherpad
     msg_ok "Stopped Service"
 
-    CLEAN_INSTALL=1 fetch_and_deploy_gh_release "snapotter" "snapotter-hq/SnapOtter" "tarball"
+    create_backup /opt/etherpad-lite/.env /opt/etherpad-lite/APIKEY.txt /opt/etherpad-lite/settings.json
+    CLEAN_INSTALL=1 fetch_and_deploy_gh_release "etherpad-lite" "ether/etherpad" "tarball"
+    restore_backup
 
-    msg_info "Updating SnapOtter"
-    cd /opt/snapotter
-    $STD npm pkg delete scripts.prepare
+    msg_info "Rebuilding Etherpad"
+    export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+    $STD corepack enable
+    cd /opt/etherpad-lite
     $STD pnpm install --frozen-lockfile
-    $STD pnpm --filter @snapotter/web build
-    sed -i 's/mediapipe==0.10.21/mediapipe>=0.10.21/' /opt/snapotter/docker/feature-manifest.json
-    msg_ok "Updated SnapOtter"
+    $STD pnpm run build:etherpad
+    msg_ok "Rebuilt Etherpad"
 
     msg_info "Starting Service"
-    systemctl start snapotter
+    systemctl start etherpad
     msg_ok "Started Service"
     msg_ok "Updated successfully!"
   fi
@@ -60,4 +62,4 @@ description
 msg_ok "Completed Successfully!\n"
 echo -e "${CREATING}${GN}${APP} setup has been successfully initialized!${CL}"
 echo -e "${INFO}${YW} Access it using the following URL:${CL}"
-echo -e "${TAB}${GATEWAY}${BGN}http://${IP}:1349${CL}"
+echo -e "${TAB}${GATEWAY}${BGN}http://${IP}:9001${CL}"
