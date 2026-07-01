@@ -489,6 +489,33 @@ Exercise vigilance regarding copycat or coat-tailing sites that seek to exploit 
 
 </details>
 
+## 2026-07-01
+
+### 🆕 New Scripts
+
+  - iVentoy ([#15503](https://github.com/community-scripts/ProxmoxVE/pull/15503))
+
+### 🚀 Updated Scripts
+
+  - #### 🐞 Bug Fixes
+
+    - homarr: fix: update-fail [@CrazyWolf13](https://github.com/CrazyWolf13) ([#15512](https://github.com/community-scripts/ProxmoxVE/pull/15512))
+    - n8n: pin version to 2.27.5 [@tremor021](https://github.com/tremor021) ([#15516](https://github.com/community-scripts/ProxmoxVE/pull/15516))
+
+## 2026-06-30
+
+### 🚀 Updated Scripts
+
+  - #### 🔧 Refactor
+
+    - Refactor: Use heredoc when creating env files and creds/other [@tremor021](https://github.com/tremor021) ([#15469](https://github.com/community-scripts/ProxmoxVE/pull/15469))
+
+### 🧰 Tools
+
+  - #### 🐞 Bug Fixes
+
+    - [tools/pve/*.sh] https://download.proxmox.com -> http://download.proxmox.com (PVE8 Only) [@galeksandrp](https://github.com/galeksandrp) ([#15498](https://github.com/community-scripts/ProxmoxVE/pull/15498))
+
 ## 2026-06-29
 
 ### 🆕 New Scripts
